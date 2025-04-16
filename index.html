@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LyricsFinder</title>
   <link rel="stylesheet" href="css/style.css?v=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
@@ -11,50 +11,21 @@
   <header>
     <h1>LyricsFinder</h1>
     <nav class="main-nav">
-      <a href="index.html">Главная</a>
+      <a href="add-song.html">Добавить песню</a>
       <a href="register.html">Регистрация</a>
-      <a href="login.html">Войти</a>
+      <a href="login.html">Вход</a>
     </nav>
   </header>
-  
   <main>
+    <!-- Секция поиска -->
     <section class="search-container">
       <input type="text" id="searchInput" placeholder="Поиск по названию или исполнителю">
       <button id="searchBtn">Найти</button>
     </section>
+    <!-- Контейнер для отображения треков -->
     <section id="results" class="results-container"></section>
   </main>
-  
-  <!-- Подключение Firebase SDK через <script type="module"> -->
-  <script type="module">
-    // Импорт необходимых функций из Firebase (версия 11.6.0)
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
-    import { getAuth } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-analytics.js";
-    
-    // Конфигурация Firebase для вашего проекта
-    const firebaseConfig = {
-      apiKey: "AIzaSyBmSng88xnPQgxhUYoRZsPnCi9MB9Z7aP8",
-      authDomain: "lyricsfinder-689ac.firebaseapp.com",
-      projectId: "lyricsfinder-689ac",
-      storageBucket: "lyricsfinder-689ac.firebasestorage.app",
-      messagingSenderId: "643308267858",
-      appId: "1:643308267858:web:e6d5ee3c0949309467328b",
-      measurementId: "G-3J9MWM0BQ1"
-    };
-
-    // Инициализация Firebase
-    const app = initializeApp(firebaseConfig);
-    // Инициализация Firebase Auth для регистрации и авторизации пользователей
-    const auth = getAuth(app);
-    // Инициализация Analytics (если планируете использовать)
-    const analytics = getAnalytics(app);
-
-    // Теперь объект auth доступен для использования в других модулях или скриптах,
-    // например, в логике регистрации/входа.
-  </script>
-  
-  <!-- Подключение основного скрипта для функциональности поиска -->
+  <script src="config.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>
