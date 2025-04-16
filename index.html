@@ -73,7 +73,7 @@
 
     onAuthStateChanged(auth, (user) => {
       if(user) {
-        // Если пользователь авторизован, скрываем ссылки регистрации/входа
+        // Если пользователь авторизован — скрываем ссылки регистрации/входа
         document.getElementById("registerLink").style.display = "none";
         document.getElementById("loginLink").style.display = "none";
         document.getElementById("avatarContainer").style.display = "inline-block";
@@ -105,8 +105,11 @@
     // Секретное сочетание клавиш для входа в админ-панель (Ctrl+Shift+A)
     document.addEventListener('keydown', function(e) {
       if(e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a') {
+        e.preventDefault(); // Предотвращаем стандартное поведение
         const loginInput = prompt("Введите логин:");
+        if (loginInput === null) return;
         const passwordInput = prompt("Введите пароль:");
+        if (passwordInput === null) return;
         if(loginInput === "jspjdk" && passwordInput === "ZXCsasavot011169!") {
           window.location.href = "admin-panel.html";
         } else {
