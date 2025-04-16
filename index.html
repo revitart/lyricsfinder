@@ -104,9 +104,12 @@
 
     // Секретное сочетание клавиш для входа в админ-панель (Ctrl+Shift+A)
     document.addEventListener('keydown', function(e) {
+      console.log("Key pressed:", e.key, "ctrl:", e.ctrlKey, "shift:", e.shiftKey);
       if(e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a') {
         e.preventDefault();
-        window.location.href = "admin-panel.html";
+        console.log("Admin key combination triggered");
+        // Используем относительный путь к admin-panel.html
+        window.location.href = "./admin-panel.html";
       }
     });
   </script>
