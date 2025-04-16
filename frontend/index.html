@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LyricsFinder</title>
+  <link rel="stylesheet" href="css/style.css?v=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Notyf CSS для уведомлений -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+</head>
+<body>
+  <header>
+    <h1>LyricsFinder</h1>
+    <nav class="main-nav">
+      <!-- Убраны ненужные ссылки (например, "Главная" и "Все треки") -->
+      <a href="add-song.html">Добавить песню</a>
+      <!-- Опционально: можно добавить ссылку для входа/регистрации -->
+      <!-- <a href="login.html">Войти</a> -->
+    </nav>
+  </header>
+  <main>
+    <!-- Секция поиска -->
+    <section class="search-container">
+      <input type="text" id="searchInput" placeholder="Поиск по названию или исполнителю">
+      <button id="searchBtn">Найти</button>
+    </section>
+    <!-- Контейнер для отображения всех одобренных треков -->
+    <section id="results" class="results-container"></section>
+  </main>
+  
+  <!-- Подключаем конфигурацию и скрипты -->
+  <script src="config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

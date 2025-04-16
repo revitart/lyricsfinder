@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <!-- Обеспечивает корректное отображение на мобильных устройствах -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Добавить песню - LyricsFinder</title>
+  <link rel="stylesheet" href="css/style.css?v=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header>
+    <h1>Добавить песню</h1>
+    <!-- Кнопка для возврата на главную, расположенная в верхней части страницы -->
+    <nav class="main-nav">
+      <a href="index.html" class="admin-btn">На главную</a>
+    </nav>
+  </header>
+  <main>
+    <!-- Форма для добавления песни -->
+    <form id="addSongForm">
+      <label for="artist">Исполнитель:</label>
+      <input type="text" id="artist" name="artist" required>
+
+      <label for="title">Название песни:</label>
+      <input type="text" id="title" name="title" required>
+
+      <label for="feat">Приглашенный гость (опционально):</label>
+      <input type="text" id="feat" name="feat">
+
+      <label for="genre">Жанр:</label>
+      <select id="genre" name="genre">
+        <option value="Поп">Поп</option>
+        <option value="Хип-хоп">Хип-хоп</option>
+        <option value="Рок">Рок</option>
+        <option value="Другой">Другой</option>
+      </select>
+      <!-- Контейнер для ввода кастомного жанра, если выбран вариант "Другой" -->
+      <div id="customGenreContainer" style="display:none;">
+        <label for="customGenre">Укажите жанр:</label>
+        <input type="text" id="customGenre" name="customGenre">
+      </div>
+
+      <label for="lyrics">Текст песни:</label>
+      <textarea id="lyrics" name="lyrics" required></textarea>
+
+      <label for="cover">Обложка трека:</label>
+      <!-- Ограничиваем выбор файла только изображениями -->
+      <input type="file" id="cover" name="cover" accept="image/*">
+      <!-- Предварительный просмотр выбранного изображения -->
+      <img id="coverPreview" src="" alt="Предварительный просмотр" style="max-width:200px; display:none; margin-top:10px;">
+
+      <label for="producer">Продюсер (опционально):</label>
+      <input type="text" id="producer" name="producer">
+
+      <label for="lyricist">Автор текста (опционально):</label>
+      <input type="text" id="lyricist" name="lyricist">
+
+      <label for="releaseDate">Дата выхода (опционально):</label>
+      <input type="date" id="releaseDate" name="releaseDate">
+
+      <button type="submit">Отправить</button>
+    </form>
+  </main>
+  <!-- Подключаем конфигурацию -->
+  <script src="config.js"></script>
+  <script src="js/add-song.js"></script>
+</body>
+</html>
