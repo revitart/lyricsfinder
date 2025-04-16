@@ -11,10 +11,12 @@
   <header>
     <h1>LyricsFinder</h1>
     <nav class="main-nav">
-      <a href="add-song.html">Добавить песню</a>
-      <!-- При необходимости можно добавить дополнительные ссылки -->
+      <a href="index.html">Главная</a>
+      <a href="register.html">Регистрация</a>
+      <a href="login.html">Войти</a>
     </nav>
   </header>
+  
   <main>
     <section class="search-container">
       <input type="text" id="searchInput" placeholder="Поиск по названию или исполнителю">
@@ -25,13 +27,11 @@
   
   <!-- Подключение Firebase SDK через <script type="module"> -->
   <script type="module">
-    // Импорт необходимых функций из SDK Firebase (версия 11.6.0)
+    // Импорт необходимых функций из Firebase (версия 11.6.0)
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
-    // Импортируем Firebase Authentication, который понадобится для регистрации/авторизации
     import { getAuth } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
-    // Импортируем Firebase Analytics (опционально)
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-analytics.js";
-
+    
     // Конфигурация Firebase для вашего проекта
     const firebaseConfig = {
       apiKey: "AIzaSyBmSng88xnPQgxhUYoRZsPnCi9MB9Z7aP8",
@@ -50,12 +50,11 @@
     // Инициализация Analytics (если планируете использовать)
     const analytics = getAnalytics(app);
 
-    // Далее можно будет использовать объект auth для вызова функций регистрации:
-    // например, createUserWithEmailAndPassword(auth, email, password)
-    // или для входа: signInWithEmailAndPassword(auth, email, password)
+    // Теперь объект auth доступен для использования в других модулях или скриптах,
+    // например, в логике регистрации/входа.
   </script>
-
-  <!-- Подключение вашего основного скрипта для функциональности сайта -->
+  
+  <!-- Подключение основного скрипта для функциональности поиска -->
   <script src="js/main.js"></script>
 </body>
 </html>

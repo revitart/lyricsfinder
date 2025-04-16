@@ -10,7 +10,6 @@
 <body>
   <header>
     <h1>LyricsFinder</h1>
-    <!-- Здесь можно добавить ссылку для возврата на главную или для перехода на страницу входа -->
     <nav class="main-nav">
       <a href="index.html">Главная</a>
       <a href="login.html">Войти</a>
@@ -30,36 +29,31 @@
     </form>
   </main>
   
-  <!-- Подключение Firebase SDK через script type="module" -->
+  <!-- Подключаем Firebase SDK для аутентификации через тег <script type="module"> -->
   <script type="module">
-    // Импортируем необходимые функции Firebase Authentication (используем модульную версию, которую рекомендуется использовать для современных проектов)
     import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
-
+    
     // Получаем экземпляр аутентификации
     const auth = getAuth();
-
-    // Находим форму регистрации по id
+    
     const registerForm = document.getElementById("registerForm");
-
-    // Добавляем обработчик события при отправке формы
+    
     registerForm.addEventListener("submit", (e) => {
       e.preventDefault();
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
-
-      // Вызываем функцию регистрации пользователя
+      console.log("Попытка регистрации с email:", email);
+      
       createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
-          // Регистрация успешна
           const user = userCredential.user;
+          console.log("Регистрация успешна:", user);
           alert("Регистрация прошла успешно!");
-          // Перенаправляем пользователя, например, на главную страницу
           window.location.href = "index.html";
         })
         .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          alert("Ошибка регистрации: " + errorMessage);
+          console.error("Ошибка регистрации:", error);
+          alert("Ошибка регистрации: " + error.message);
         });
     });
   </script>
