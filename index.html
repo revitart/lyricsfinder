@@ -6,32 +6,51 @@
   <title>LyricsFinder</title>
   <link rel="stylesheet" href="css/style.css?v=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    /* Стиль для аватарки в навигации */
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #ccc;
+      overflow: hidden;
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 10px;
+      cursor: pointer;
+    }
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  </style>
 </head>
 <body>
   <header>
     <h1>LyricsFinder</h1>
     <nav class="main-nav">
       <a href="add-song.html">Добавить песню</a>
+      <!-- Ссылки для неавторизованных пользователей -->
       <a href="register.html" id="registerLink">Регистрация</a>
       <a href="login.html" id="loginLink">Вход</a>
+      <!-- Контейнер для аватарки, появляющийся при авторизации -->
+      <div id="avatarContainer" style="display:none;" onclick="window.location.href='profile.html'"></div>
     </nav>
   </header>
   <main>
-    <!-- Секция поиска -->
     <section class="search-container">
       <input type="text" id="searchInput" placeholder="Поиск по названию или исполнителю">
       <button id="searchBtn">Найти</button>
     </section>
-    <!-- Контейнер для отображения треков -->
     <section id="results" class="results-container"></section>
   </main>
 
-  <!-- Firebase SDK и настройка авторизации -->
+  <!-- Firebase SDK и инициализация авторизации -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
 
-    // Конфигурация вашего проекта Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyBmSng88xnPQgxhUYoRZsPnCi9MB9Z7aP8",
       authDomain: "lyricsfinder-689ac.firebaseapp.com",
@@ -42,44 +61,31 @@
       measurementId: "G-F1ELHLM4DB"
     };
 
-    // Инициализируем Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    // Отслеживаем изменения состояния авторизации
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        // Пользователь авторизован – скрываем ссылки "Регистрация" и "Вход"
+        // Скрываем ссылки регистрации и входа
         document.getElementById("registerLink").style.display = "none";
         document.getElementById("loginLink").style.display = "none";
-        // Если кнопка профиля ещё не создана, создадим её
-        if (!document.getElementById("profileLink")) {
-          const profileLink = document.createElement("a");
-          profileLink.id = "profileLink";
-          profileLink.href = "#";
-          profileLink.innerText = "Профиль / Выйти";
-          profileLink.onclick = (e) => {
-            e.preventDefault();
-            signOut(auth).then(() => {
-              alert("Вы вышли из аккаунта");
-            });
-          };
-          document.querySelector(".main-nav").appendChild(profileLink);
+        const avatarContainer = document.getElementById("avatarContainer");
+        avatarContainer.style.display = "inline-block";
+        if (user.photoURL) {
+          avatarContainer.innerHTML = `<div class="avatar"><img src="${user.photoURL}" alt="Avatar"></div>`;
+        } else {
+          avatarContainer.innerHTML = `<div class="avatar"></div>`;
         }
       } else {
-        // Пользователь не авторизован – показываем ссылки "Регистрация" и "Вход"
+        // Если пользователь не авторизован, показываем ссылки
         document.getElementById("registerLink").style.display = "inline-block";
         document.getElementById("loginLink").style.display = "inline-block";
-        // Удаляем кнопку профиля, если она существует
-        const profileLink = document.getElementById("profileLink");
-        if (profileLink) {
-          profileLink.remove();
-        }
+        document.getElementById("avatarContainer").style.display = "none";
       }
     });
   </script>
   
-  <!-- Ваш основной JS для сайта -->
+  <!-- Основной JS для сайта -->
   <script src="js/main.js"></script>
 </body>
 </html>
