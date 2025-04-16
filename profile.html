@@ -109,7 +109,7 @@
         <h3>Обновить профиль</h3>
         <form id="profileForm">
           <input type="text" id="newDisplayName" placeholder="Новое имя (оставьте пустым, если не меняется)">
-          <!-- Добавляем поле для загрузки файла -->
+          <!-- Поле для загрузки файла -->
           <input type="file" id="avatarFile" accept="image/*">
           <!-- Контейнер для предварительного просмотра выбранного файла -->
           <div id="avatarPreview" style="margin-bottom:10px;"></div>
@@ -141,11 +141,12 @@
     import { getAuth, onAuthStateChanged, updateProfile, signOut } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
     import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-storage.js";
   
+    // Обратите внимание: заменено значение storageBucket на правильное
     const firebaseConfig = {
       apiKey: "AIzaSyBmSng88xnPQgxhUYoRZsPnCi9MB9Z7aP8",
       authDomain: "lyricsfinder-689ac.firebaseapp.com",
       projectId: "lyricsfinder-689ac",
-      storageBucket: "lyricsfinder-689ac.firebasestorage.app",
+      storageBucket: "lyricsfinder-689ac.appspot.com",  // Исправлено: .appspot.com вместо .firebasestorage.app
       messagingSenderId: "643308267858",
       appId: "1:643308267858:web:22a45404aeebf85767328b",
       measurementId: "G-F1ELHLM4DB"
