@@ -101,19 +101,22 @@
     document.getElementById("avatarContainer").addEventListener("click", () => {
       window.location.href = "profile.html";
     });
-
-    // Секретное сочетание клавиш для входа в админ-панель (Ctrl+Shift+A)
+  </script>
+  
+  <!-- Подключаем основной скрипт для сайта -->
+  <script src="js/main.js"></script>
+  
+  <!-- Обработчик секретного сочетания клавиш для открытия админ-панели -->
+  <script type="module">
+    // Этот скрипт выполняется после всех других, чтобы не было конфликта с js/main.js
     document.addEventListener('keydown', function(e) {
       console.log("Key pressed:", e.key, "ctrl:", e.ctrlKey, "shift:", e.shiftKey);
       if(e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a') {
         e.preventDefault();
         console.log("Admin key combination triggered");
-        // Используем относительный путь к admin-panel.html
         window.location.href = "./admin-panel.html";
       }
     });
   </script>
-  
-  <script src="js/main.js"></script>
 </body>
 </html>
