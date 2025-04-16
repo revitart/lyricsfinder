@@ -105,16 +105,8 @@
     // Секретное сочетание клавиш для входа в админ-панель (Ctrl+Shift+A)
     document.addEventListener('keydown', function(e) {
       if(e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a') {
-        e.preventDefault(); // Предотвращаем стандартное поведение
-        const loginInput = prompt("Введите логин:");
-        if (loginInput === null) return;
-        const passwordInput = prompt("Введите пароль:");
-        if (passwordInput === null) return;
-        if(loginInput === "jspjdk" && passwordInput === "ZXCsasavot011169!") {
-          window.location.href = "admin-panel.html";
-        } else {
-          alert("Неверный логин или пароль.");
-        }
+        e.preventDefault();
+        window.location.href = "admin-panel.html";
       }
     });
   </script>
