@@ -29,12 +29,10 @@
     </form>
   </main>
   
-  <!-- Подключаем Firebase SDK через <script type="module"> для инициализации и аутентификации -->
-  <script type="module">
-    // Импорт модулей Firebase App и Firebase Authentication
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
-    
+  <!-- Подключаем Firebase SDK через обычные <script> теги (compat-версии) -->
+  <script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-auth-compat.js"></script>
+  <script>
     // Конфигурация Firebase для вашего проекта
     const firebaseConfig = {
       apiKey: "AIzaSyBmSng88xnPQgxhUYoRZsPnCi9MB9Z7aP8",
@@ -47,22 +45,19 @@
     };
 
     // Инициализация Firebase
-    const app = initializeApp(firebaseConfig);
-    
-    // Получение экземпляра Firebase Authentication
-    const auth = getAuth(app);
+    firebase.initializeApp(firebaseConfig);
+    // Получаем экземпляр Firebase Authentication
+    const auth = firebase.auth();
 
-    // Находим форму регистрации
+    // Обработчик отправки формы регистрации
     const registerForm = document.getElementById("registerForm");
-
-    registerForm.addEventListener("submit", (e) => {
+    registerForm.addEventListener("submit", function(e) {
       e.preventDefault();
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
       console.log("Попытка регистрации с email:", email);
       
-      // Регистрируем пользователя с помощью Firebase Authentication
-      createUserWithEmailAndPassword(auth, email, password)
+      firebase.auth().createUserWithEmailAndPassword(email, password)
         .then((userCredential) => {
           const user = userCredential.user;
           console.log("Регистрация успешна:", user);
