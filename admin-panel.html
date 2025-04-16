@@ -2,33 +2,23 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <!-- Обеспечивает корректное отображение на мобильных устройствах -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Панель администратора - LyricsFinder</title>
   <link rel="stylesheet" href="css/style.css?v=1.0">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
   <header>
     <h1>Панель администратора</h1>
-    <!-- Навигация для админ-панели, стилизованная как кнопки -->
-    <nav class="breadcrumbs">
-      <a href="index.html" class="admin-btn">Главная</a>
-      <span> &gt; </span>
-      <a href="admin-panel.html" class="admin-btn disabled">Админ панель</a>
+    <nav class="main-nav">
+      <a href="index.html">Главная</a>
     </nav>
   </header>
   <main>
-    <!-- Панель поиска в админ-панели -->
-    <section class="admin-search">
-      <input type="text" id="adminSearchInput" placeholder="Поиск по трекам...">
-    </section>
-    <!-- Контейнер для админ-панели, куда динамически загружаются заявки и одобренные треки -->
-    <div id="adminPanel"></div>
+    <div id="adminPanel">
+      <!-- Здесь размещается контент админ-панели -->
+      <p>Добро пожаловать в админ-панель.</p>
+    </div>
   </main>
-  <!-- Контейнер для модальных окон -->
-  <div id="modalOverlay" class="modal-overlay"></div>
-  <!-- Подключение скрипта для админ-панели -->
   <script src="js/admin-panel.js"></script>
 </body>
 </html>

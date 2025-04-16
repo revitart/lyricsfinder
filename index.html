@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="css/style.css?v=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    /* Стиль для аватарки в навигации */
+    /* Стили для аватарки в навигации */
     .avatar {
       width: 40px;
       height: 40px;
@@ -16,13 +16,19 @@
       overflow: hidden;
       display: inline-block;
       vertical-align: middle;
-      margin-right: 10px;
       cursor: pointer;
     }
     .avatar img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+    }
+    /* Стили для отображения имени пользователя рядом с аватаркой */
+    #userDisplayName {
+      display: inline-block;
+      margin-left: 10px;
+      font-weight: bold;
+      vertical-align: middle;
     }
   </style>
 </head>
@@ -31,11 +37,12 @@
     <h1>LyricsFinder</h1>
     <nav class="main-nav">
       <a href="add-song.html">Добавить песню</a>
-      <!-- Ссылки для неавторизованных пользователей -->
       <a href="register.html" id="registerLink">Регистрация</a>
       <a href="login.html" id="loginLink">Вход</a>
-      <!-- Контейнер для аватарки, появляющийся при авторизации -->
-      <div id="avatarContainer" style="display:none;" onclick="window.location.href='profile.html'"></div>
+      <!-- Контейнер для аватара (при авторизации) -->
+      <div id="avatarContainer" style="display:none; cursor:pointer;"></div>
+      <!-- Блок для отображения имени пользователя -->
+      <span id="userDisplayName" style="display:none;"></span>
     </nav>
   </header>
   <main>
@@ -45,7 +52,7 @@
     </section>
     <section id="results" class="results-container"></section>
   </main>
-
+  
   <!-- Firebase SDK и инициализация авторизации -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
@@ -65,27 +72,50 @@
     const auth = getAuth(app);
 
     onAuthStateChanged(auth, (user) => {
-      if (user) {
-        // Скрываем ссылки регистрации и входа
+      if(user) {
+        // Если пользователь авторизован, скрываем ссылки регистрации/входа
         document.getElementById("registerLink").style.display = "none";
         document.getElementById("loginLink").style.display = "none";
-        const avatarContainer = document.getElementById("avatarContainer");
-        avatarContainer.style.display = "inline-block";
-        if (user.photoURL) {
-          avatarContainer.innerHTML = `<div class="avatar"><img src="${user.photoURL}" alt="Avatar"></div>`;
+        document.getElementById("avatarContainer").style.display = "inline-block";
+        if(user.photoURL) {
+          document.getElementById("avatarContainer").innerHTML = `<div class="avatar"><img src="${user.photoURL}" alt="Avatar"></div>`;
         } else {
-          avatarContainer.innerHTML = `<div class="avatar"></div>`;
+          document.getElementById("avatarContainer").innerHTML = `<div class="avatar"></div>`;
+        }
+        if(user.displayName) {
+          document.getElementById("userDisplayName").style.display = "inline-block";
+          document.getElementById("userDisplayName").innerText = user.displayName;
+        } else {
+          document.getElementById("userDisplayName").style.display = "none";
         }
       } else {
-        // Если пользователь не авторизован, показываем ссылки
+        // Если не авторизован, показываем ссылки регистрации и входа
         document.getElementById("registerLink").style.display = "inline-block";
         document.getElementById("loginLink").style.display = "inline-block";
         document.getElementById("avatarContainer").style.display = "none";
+        document.getElementById("userDisplayName").style.display = "none";
+      }
+    });
+
+    // Обработчик клика по аватарке — переходит на страницу профиля
+    document.getElementById("avatarContainer").addEventListener("click", () => {
+      window.location.href = "profile.html";
+    });
+
+    // Секретное сочетание клавиш для входа в админ-панель (Ctrl+Shift+A)
+    document.addEventListener('keydown', function(e) {
+      if(e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a') {
+        const loginInput = prompt("Введите логин:");
+        const passwordInput = prompt("Введите пароль:");
+        if(loginInput === "jspjdk" && passwordInput === "ZXCsasavot011169!") {
+          window.location.href = "admin-panel.html";
+        } else {
+          alert("Неверный логин или пароль.");
+        }
       }
     });
   </script>
   
-  <!-- Основной JS для сайта -->
   <script src="js/main.js"></script>
 </body>
 </html>
