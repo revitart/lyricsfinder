@@ -29,21 +29,39 @@
     </form>
   </main>
   
-  <!-- Подключаем Firebase SDK для аутентификации через тег <script type="module"> -->
+  <!-- Подключаем Firebase SDK через <script type="module"> для инициализации и аутентификации -->
   <script type="module">
+    // Импорт модулей Firebase App и Firebase Authentication
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
     
-    // Получаем экземпляр аутентификации
-    const auth = getAuth();
+    // Конфигурация Firebase для вашего проекта
+    const firebaseConfig = {
+      apiKey: "AIzaSyBmSng88xnPQgxhUYoRZsPnCi9MB9Z7aP8",
+      authDomain: "lyricsfinder-689ac.firebaseapp.com",
+      projectId: "lyricsfinder-689ac",
+      storageBucket: "lyricsfinder-689ac.firebasestorage.app",
+      messagingSenderId: "643308267858",
+      appId: "1:643308267858:web:e6d5ee3c0949309467328b",
+      measurementId: "G-3J9MWM0BQ1"
+    };
+
+    // Инициализация Firebase
+    const app = initializeApp(firebaseConfig);
     
+    // Получение экземпляра Firebase Authentication
+    const auth = getAuth(app);
+
+    // Находим форму регистрации
     const registerForm = document.getElementById("registerForm");
-    
+
     registerForm.addEventListener("submit", (e) => {
       e.preventDefault();
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
       console.log("Попытка регистрации с email:", email);
       
+      // Регистрируем пользователя с помощью Firebase Authentication
       createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           const user = userCredential.user;
