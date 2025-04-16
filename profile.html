@@ -27,6 +27,7 @@
       background-color: #ccc;
       overflow: hidden;
       margin-right: 20px;
+      position: relative;
     }
     .profile-avatar img {
       width: 100%;
@@ -40,12 +41,14 @@
       margin: 0;
       color: #666;
     }
-    .profile-update input {
+    .profile-update input, 
+    .profile-update button {
       width: 100%;
       padding: 10px;
       margin-bottom: 10px;
       border: 1px solid #ccc;
       border-radius: 5px;
+      box-sizing: border-box;
     }
     .btn {
       padding: 10px 20px;
@@ -94,7 +97,9 @@
   <main>
     <div class="profile-container">
       <div class="profile-header">
-        <div class="profile-avatar" id="profileAvatar"></div>
+        <div class="profile-avatar" id="profileAvatar">
+          <!-- Здесь будет предварительный просмотр загруженной аватарки -->
+        </div>
         <div class="profile-info">
           <h2 id="displayName">Имя пользователя</h2>
           <p id="emailDisplay"></p>
@@ -104,8 +109,11 @@
         <h3>Обновить профиль</h3>
         <form id="profileForm">
           <input type="text" id="newDisplayName" placeholder="Новое имя (оставьте пустым, если не меняется)">
-          <input type="text" id="newPhotoURL" placeholder="URL аватарки (оставьте пустым, если не меняется)">
-          <button type="submit" class="btn btn-primary">Обновить</button>
+          <!-- Добавляем поле для загрузки файла -->
+          <input type="file" id="avatarFile" accept="image/*">
+          <!-- Контейнер для предварительного просмотра выбранного файла -->
+          <div id="avatarPreview" style="margin-bottom:10px;"></div>
+          <button type="submit" class="btn btn-primary">Обновить профиль</button>
         </form>
       </div>
       <div class="songs-list">
@@ -127,10 +135,11 @@
     </div>
   </div>
   
-  <!-- Firebase SDK и логика профиля -->
+  <!-- Firebase SDK: App, Auth и Storage -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, updateProfile, signOut } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+    import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-storage.js";
   
     const firebaseConfig = {
       apiKey: "AIzaSyBmSng88xnPQgxhUYoRZsPnCi9MB9Z7aP8",
@@ -144,6 +153,7 @@
   
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    const storage = getStorage(app);
   
     function loadProfile(user) {
       document.getElementById("emailDisplay").innerText = user.email;
@@ -176,29 +186,67 @@
       }
     }
   
+    // Предварительный просмотр выбранного файла
+    const avatarFileInput = document.getElementById("avatarFile");
+    const avatarPreviewDiv = document.getElementById("avatarPreview");
+    avatarFileInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          avatarPreviewDiv.innerHTML = `<img src="${e.target.result}" alt="Avatar Preview" style="max-width:150px; border-radius:50%;">`;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        avatarPreviewDiv.innerHTML = "";
+      }
+    });
+  
     onAuthStateChanged(auth, (user) => {
       if (user) {
         loadProfile(user);
       } else {
-        // Если не авторизован, перенаправляем на страницу входа
         window.location.href = "login.html";
       }
     });
   
-    // Обновление профиля
-    document.getElementById("profileForm").addEventListener("submit", (e) => {
+    // Обновление профиля: если выбран файл, загружаем его в Firebase Storage и обновляем photoURL
+    document.getElementById("profileForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const newDisplayName = document.getElementById("newDisplayName").value;
-      const newPhotoURL = document.getElementById("newPhotoURL").value;
-      updateProfile(auth.currentUser, {
-        displayName: newDisplayName || auth.currentUser.displayName,
-        photoURL: newPhotoURL || auth.currentUser.photoURL
-      }).then(() => {
-        alert("Профиль обновлён!");
-        loadProfile(auth.currentUser);
-      }).catch((error) => {
-        alert("Ошибка обновления: " + error.message);
-      });
+      const file = avatarFileInput.files[0];
+  
+      if (file) {
+        // Загрузка файла в Storage
+        const user = auth.currentUser;
+        const fileRef = storageRef(storage, `avatars/${user.uid}_${Date.now()}`);
+        try {
+          const snapshot = await uploadBytes(fileRef, file);
+          const downloadURL = await getDownloadURL(snapshot.ref);
+          // Обновляем профиль с новым photoURL и новым именем, если указано
+          updateProfile(user, {
+            displayName: newDisplayName || user.displayName,
+            photoURL: downloadURL
+          }).then(() => {
+            alert("Профиль обновлён!");
+            loadProfile(user);
+          }).catch((error) => {
+            alert("Ошибка обновления: " + error.message);
+          });
+        } catch (err) {
+          alert("Ошибка загрузки файла: " + err.message);
+        }
+      } else {
+        // Если файл не выбран, просто обновляем displayName
+        updateProfile(auth.currentUser, {
+          displayName: newDisplayName || auth.currentUser.displayName
+        }).then(() => {
+          alert("Профиль обновлён!");
+          loadProfile(auth.currentUser);
+        }).catch((error) => {
+          alert("Ошибка обновления: " + error.message);
+        });
+      }
     });
   
     // Обработка кнопки выхода с модальным окном
@@ -217,8 +265,5 @@
       });
     });
   </script>
-  
-  <!-- Если вы хотите перенести часть логики в отдельный файл, можно создать js/profile.js и подключить его здесь вместо встроенного скрипта -->
-  <!--<script src="js/profile.js"></script>-->
 </body>
 </html>
