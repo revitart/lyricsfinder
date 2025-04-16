@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Регистрация - LyricsFinder</title>
+  <link rel="stylesheet" href="css/style.css?v=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header>
+    <h1>LyricsFinder</h1>
+    <!-- Здесь можно добавить ссылку для возврата на главную или для перехода на страницу входа -->
+    <nav class="main-nav">
+      <a href="index.html">Главная</a>
+      <a href="login.html">Войти</a>
+    </nav>
+  </header>
+  
+  <main>
+    <h2>Регистрация</h2>
+    <form id="registerForm">
+      <label for="email">Email:</label>
+      <input type="email" id="email" placeholder="Введите ваш email" required>
+      
+      <label for="password">Пароль:</label>
+      <input type="password" id="password" placeholder="Введите пароль" required>
+      
+      <button type="submit">Зарегистрироваться</button>
+    </form>
+  </main>
+  
+  <!-- Подключение Firebase SDK через script type="module" -->
+  <script type="module">
+    // Импортируем необходимые функции Firebase Authentication (используем модульную версию, которую рекомендуется использовать для современных проектов)
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+
+    // Получаем экземпляр аутентификации
+    const auth = getAuth();
+
+    // Находим форму регистрации по id
+    const registerForm = document.getElementById("registerForm");
+
+    // Добавляем обработчик события при отправке формы
+    registerForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      // Вызываем функцию регистрации пользователя
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          // Регистрация успешна
+          const user = userCredential.user;
+          alert("Регистрация прошла успешно!");
+          // Перенаправляем пользователя, например, на главную страницу
+          window.location.href = "index.html";
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          alert("Ошибка регистрации: " + errorMessage);
+        });
+    });
+  </script>
+</body>
+</html>
