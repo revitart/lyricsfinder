@@ -12,8 +12,8 @@
     <h1>LyricsFinder</h1>
     <nav class="main-nav">
       <a href="add-song.html">Добавить песню</a>
-      <a href="register.html">Регистрация</a>
-      <a href="login.html">Вход</a>
+      <a href="register.html" id="registerLink">Регистрация</a>
+      <a href="login.html" id="loginLink">Вход</a>
     </nav>
   </header>
   <main>
@@ -25,7 +25,61 @@
     <!-- Контейнер для отображения треков -->
     <section id="results" class="results-container"></section>
   </main>
-  <script src="config.js"></script>
+
+  <!-- Firebase SDK и настройка авторизации -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+
+    // Конфигурация вашего проекта Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyBmSng88xnPQgxhUYoRZsPnCi9MB9Z7aP8",
+      authDomain: "lyricsfinder-689ac.firebaseapp.com",
+      projectId: "lyricsfinder-689ac",
+      storageBucket: "lyricsfinder-689ac.firebasestorage.app",
+      messagingSenderId: "643308267858",
+      appId: "1:643308267858:web:22a45404aeebf85767328b",
+      measurementId: "G-F1ELHLM4DB"
+    };
+
+    // Инициализируем Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // Отслеживаем изменения состояния авторизации
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // Пользователь авторизован – скрываем ссылки "Регистрация" и "Вход"
+        document.getElementById("registerLink").style.display = "none";
+        document.getElementById("loginLink").style.display = "none";
+        // Если кнопка профиля ещё не создана, создадим её
+        if (!document.getElementById("profileLink")) {
+          const profileLink = document.createElement("a");
+          profileLink.id = "profileLink";
+          profileLink.href = "#";
+          profileLink.innerText = "Профиль / Выйти";
+          profileLink.onclick = (e) => {
+            e.preventDefault();
+            signOut(auth).then(() => {
+              alert("Вы вышли из аккаунта");
+            });
+          };
+          document.querySelector(".main-nav").appendChild(profileLink);
+        }
+      } else {
+        // Пользователь не авторизован – показываем ссылки "Регистрация" и "Вход"
+        document.getElementById("registerLink").style.display = "inline-block";
+        document.getElementById("loginLink").style.display = "inline-block";
+        // Удаляем кнопку профиля, если она существует
+        const profileLink = document.getElementById("profileLink");
+        if (profileLink) {
+          profileLink.remove();
+        }
+      }
+    });
+  </script>
+  
+  <!-- Ваш основной JS для сайта -->
   <script src="js/main.js"></script>
 </body>
 </html>
