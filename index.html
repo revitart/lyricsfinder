@@ -26,12 +26,12 @@
     <nav class="main-nav">
       <a href="add-song.html">Добавить песню</a>
       <a href="register.html" id="registerLink">Регистрация</a>
-      <a href="login.html" id="loginLink">Вход</a>
+      <a href="login.html"    id="loginLink">Вход</a>
       <div id="avatarContainer" style="display:none; cursor:pointer;"></div>
       <span id="userDisplayName" style="display:none;"></span>
     </nav>
   </header>
-  <main>
+  <main style="margin-top:120px;">
     <section class="search-container">
       <input type="text" id="searchInput" placeholder="Поиск по названию или исполнителю">
       <button id="searchBtn">Найти</button>
@@ -52,43 +52,44 @@
       appId: "1:643308267858:web:22a45404aeebf85767328b",
       measurementId: "G-F1ELHLM4DB"
     };
-    const app = initializeApp(firebaseConfig);
+    const app  = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
     onAuthStateChanged(auth, user => {
-      const reg = document.getElementById("registerLink");
-      const log = document.getElementById("loginLink");
-      const av  = document.getElementById("avatarContainer");
-      const nm  = document.getElementById("userDisplayName");
+      const R = document.getElementById("registerLink"),
+            L = document.getElementById("loginLink"),
+            A = document.getElementById("avatarContainer"),
+            N = document.getElementById("userDisplayName");
       if (user) {
-        reg.style.display = log.style.display = "none";
-        av.style.display = "inline-block";
-        av.innerHTML = user.photoURL
-          ? `<div class="avatar"><img src="${user.photoURL}" alt></div>`
+        R.style.display = L.style.display = "none";
+        A.style.display = "inline-block";
+        A.innerHTML = user.photoURL
+          ? `<div class="avatar"><img src="${user.photoURL}"></div>`
           : `<div class="avatar"></div>`;
         if (user.displayName) {
-          nm.style.display = "inline-block";
-          nm.textContent = user.displayName;
-        } else nm.style.display = "none";
+          N.style.display = "inline-block";
+          N.textContent = user.displayName;
+        } else N.style.display = "none";
       } else {
-        reg.style.display = log.style.display = "inline-block";
-        av.style.display = nm.style.display = "none";
+        R.style.display = L.style.display = "inline-block";
+        A.style.display = N.style.display = "none";
       }
     });
 
-    document.getElementById("avatarContainer").addEventListener("click", () => {
+    document.getElementById("avatarContainer").onclick = () => {
       window.location.href = "profile.html";
-    });
+    };
   </script>
 
-  <script src="js/main.js"></script>
+  <!-- основной поиск/рендер -->
+  <script type="module" src="js/main.js"></script>
 
-  <!-- секретное сочетание клавиш для админ‑панели -->
+  <!-- админ‑хоткей -->
   <script>
     document.addEventListener("keydown", e => {
-      if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "a") {
+      if (e.ctrlKey && e.shiftKey && e.key.toLowerCase()==="a") {
         e.preventDefault();
-        localStorage.setItem("adminAuth", "true");
+        localStorage.setItem("adminAuth","true");
         window.location.href = "admin-panel.html";
       }
     });

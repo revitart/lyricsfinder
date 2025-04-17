@@ -12,25 +12,24 @@
     <nav class="breadcrumbs">
       <a href="index.html" class="admin-btn">Главная</a>
       <span> &gt; </span>
-      <a href="admin-panel.html" class="admin-btn disabled">Админ панель</a>
+      <a href="admin-panel.html" class="admin-btn disabled">Админ</a>
       <button id="adminLogout" class="admin-btn btn-secondary" style="margin-left:auto;">Выйти из админ‑панели</button>
     </nav>
   </header>
-  <main>
+  <main style="margin-top:120px;">
     <section class="admin-search">
       <input type="text" id="adminSearchInput" placeholder="Поиск по трекам...">
     </section>
     <div id="adminPanel"></div>
+    <div id="modalOverlay" class="modal-overlay"></div>
   </main>
 
   <script>
-    // Выход из админ-панели
-    document.getElementById("adminLogout").addEventListener("click", () => {
+    document.getElementById("adminLogout").onclick = () => {
       localStorage.removeItem("adminAuth");
       window.location.href = "index.html";
-    });
+    };
   </script>
-
-  <script src="js/admin-panel.js"></script>
+  <script type="module" src="js/admin-panel.js"></script>
 </body>
 </html>

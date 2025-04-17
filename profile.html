@@ -7,81 +7,10 @@
   <link rel="stylesheet" href="css/style.css?v=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    .profile-container {
-      max-width: 600px;
-      margin: 20px auto;
-      padding: 20px;
-      background: #fff;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    .profile-header {
-      display: flex;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-    .profile-avatar {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      background-color: #ccc;
-      overflow: hidden;
-      margin-right: 20px;
-    }
-    .profile-avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .profile-info h2 {
-      margin: 0 0 5px 0;
-    }
-    .profile-info p {
-      margin: 0;
-      color: #666;
-    }
-    .profile-update input {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-    .btn {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      margin-right: 10px;
-    }
-    .btn-primary { background: #28a745; color: #fff; }
-    .btn-secondary { background: #dc3545; color: #fff; }
-    .songs-list {
-      margin-top: 20px;
-    }
-    .song-item {
-      border-bottom: 1px solid #eee;
-      padding: 10px 0;
-    }
-    /* Стили для модального окна */
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.5);
-      display: none;
-      align-items: center;
-      justify-content: center;
-    }
-    .modal {
-      background: #fff;
-      padding: 20px;
-      border-radius: 10px;
-      max-width: 400px;
-      text-align: center;
-    }
+    .song-item { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #eee; }
+    .song-item button { background:#dc3545; color:#fff; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; }
+    .section-list { margin-top:20px; }
+    .section-list h4 { margin-bottom:10px; }
   </style>
 </head>
 <body>
@@ -91,47 +20,44 @@
       <a href="index.html">Главная</a>
     </nav>
   </header>
-  <main>
+  <main style="margin-top:120px;">
     <div class="profile-container">
       <div class="profile-header">
         <div class="profile-avatar" id="profileAvatar"></div>
         <div class="profile-info">
-          <h2 id="displayName">Имя пользователя</h2>
+          <h2 id="displayName">Пользователь</h2>
           <p id="emailDisplay"></p>
         </div>
       </div>
-      <div class="profile-update">
-        <h3>Обновить профиль</h3>
-        <form id="profileForm">
-          <input type="text" id="newDisplayName" placeholder="Новое имя (оставьте пустым, если не меняется)">
-          <input type="text" id="newPhotoURL" placeholder="URL аватарки (оставьте пустым, если не меняется)">
-          <button type="submit" class="btn btn-primary">Обновить</button>
-        </form>
-      </div>
       <div class="songs-list">
         <h3>Ваши песни</h3>
-        <div id="userSongs"></div>
+        <div id="pendingList" class="section-list">
+          <h4>Ожидают одобрения</h4>
+          <div id="pendingSongs"></div>
+        </div>
+        <div id="approvedList" class="section-list">
+          <h4>Одобренные</h4>
+          <div id="approvedSongs"></div>
+        </div>
       </div>
-      <div style="margin-top:20px; text-align:center;">
+      <div style="text-align:center; margin-top:20px;">
         <button id="logoutBtn" class="btn btn-secondary">Выйти</button>
+      </div>
+      <div id="logoutModal" class="modal-overlay">
+        <div class="modal">
+          <p>Вы уверены, что хотите выйти?</p>
+          <button id="confirmLogout" class="btn btn-secondary">Подтвердить</button>
+          <button id="cancelLogout" class="btn btn-primary">Отмена</button>
+        </div>
       </div>
     </div>
   </main>
 
-  <!-- Модальное окно подтверждения выхода -->
-  <div class="modal-overlay" id="logoutModal">
-    <div class="modal">
-      <p>Вы уверены, что хотите выйти?</p>
-      <button id="confirmLogout" class="btn btn-secondary">Подтвердить</button>
-      <button id="cancelLogout" class="btn btn-primary">Отмена</button>
-    </div>
-  </div>
-  
-  <!-- Firebase SDK и логика профиля -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged, updateProfile, signOut } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
-  
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+
     const firebaseConfig = {
       apiKey: "AIzaSyBmSng88xnPQgxhUYoRZsPnCi9MB9Z7aP8",
       authDomain: "lyricsfinder-689ac.firebaseapp.com",
@@ -141,83 +67,60 @@
       appId: "1:643308267858:web:22a45404aeebf85767328b",
       measurementId: "G-F1ELHLM4DB"
     };
-  
-    const app = initializeApp(firebaseConfig);
+    const app  = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-  
-    function loadProfile(user) {
-      document.getElementById("emailDisplay").innerText = user.email;
-      document.getElementById("displayName").innerText = user.displayName || "Пользователь";
-      const avatarDiv = document.getElementById("profileAvatar");
-      if (user.photoURL) {
-        avatarDiv.innerHTML = `<img src="${user.photoURL}" alt="Avatar">`;
-      } else {
-        avatarDiv.innerHTML = "";
-        avatarDiv.style.backgroundColor = "#ccc";
-      }
-      loadUserSongs(user.email);
-    }
-  
-    function loadUserSongs(email) {
-      const songs = JSON.parse(localStorage.getItem('songs')) || [];
-      const userSongs = songs.filter(song => song.submittedBy === email);
-      const userSongsDiv = document.getElementById("userSongs");
-      userSongsDiv.innerHTML = "";
-      if (userSongs.length === 0) {
-        userSongsDiv.innerHTML = "<p>Нет песен.</p>";
-      } else {
-        userSongs.forEach(song => {
-          const div = document.createElement("div");
-          div.className = "song-item";
-          div.innerText = `${song.title} - ${song.artist}`;
-          userSongsDiv.appendChild(div);
-        });
-      }
-    }
-  
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        loadProfile(user);
-      } else {
-        window.location.href = "login.html";
-      }
-    });
-  
-    // Обновление профиля
-    document.getElementById("profileForm").addEventListener("submit", (e) => {
-      e.preventDefault();
-      const newDisplayName = document.getElementById("newDisplayName").value;
-      const newPhotoURL = document.getElementById("newPhotoURL").value;
-      updateProfile(auth.currentUser, {
-        displayName: newDisplayName || auth.currentUser.displayName,
-        photoURL: newPhotoURL || auth.currentUser.photoURL
-      }).then(() => {
-        alert("Профиль обновлён!");
-        loadProfile(auth.currentUser);
-      }).catch((error) => {
-        alert("Ошибка обновления: " + error.message);
+    const db   = getFirestore(app);
+
+    async function loadUserSongs(email) {
+      const pendQ = query(collection(db, "songs"), where("submittedBy","==",email), where("status","==","pending"));
+      const apprQ = query(collection(db, "songs"), where("submittedBy","==",email), where("status","==","approved"));
+
+      const [pendSnap, apprSnap] = await Promise.all([getDocs(pendQ), getDocs(apprQ)]);
+      const pending  = pendSnap.docs.map(d=>({id:d.id,...d.data()}));
+      const approved = apprSnap.docs.map(d=>({id:d.id,...d.data()}));
+
+      const pendDiv = document.getElementById("pendingSongs");
+      pendDiv.innerHTML = pending.length
+        ? pending.map(s=>`
+            <div class="song-item">
+              <span>${s.title} — ${s.artist}</span>
+              <button data-id="${s.id}">Удалить</button>
+            </div>`).join('')
+        : "<p>Нет ожидающих заявок.</p>";
+      pendDiv.querySelectorAll('button').forEach(btn=>{
+        btn.onclick = async ()=>{
+          await deleteDoc(doc(db,"songs",btn.dataset.id));
+          loadUserSongs(email);
+        };
       });
+
+      const apprDiv = document.getElementById("approvedSongs");
+      apprDiv.innerHTML = approved.length
+        ? approved.map(s=>`<div class="song-item"><span>${s.title} — ${s.artist}</span></div>`).join('')
+        : "<p>Нет одобренных треков.</p>";
+    }
+
+    onAuthStateChanged(auth, user => {
+      if (!user) return window.location.href="login.html";
+      document.getElementById("emailDisplay").textContent = user.email;
+      document.getElementById("displayName").textContent = user.displayName||user.email;
+      const av = document.getElementById("profileAvatar");
+      av.innerHTML = user.photoURL?`<img src="${user.photoURL}">`:"";
+      loadUserSongs(user.email);
     });
-  
-    // Обработка выхода (модальное окно)
-    document.getElementById("logoutBtn").addEventListener("click", () => {
+
+    document.getElementById("logoutBtn").onclick = () => {
       document.getElementById("logoutModal").style.display = "flex";
-    });
-    document.getElementById("cancelLogout").addEventListener("click", () => {
+    };
+    document.getElementById("cancelLogout").onclick = () => {
       document.getElementById("logoutModal").style.display = "none";
-    });
-    document.getElementById("confirmLogout").addEventListener("click", (e) => {
+    };
+    document.getElementById("confirmLogout").onclick = async e => {
       e.preventDefault();
-      signOut(auth)
-        .then(() => {
-          alert("Вы успешно вышли");
-          window.location.href = "index.html";
-        })
-        .catch((error) => {
-          console.error("Ошибка выхода:", error);
-          alert("Ошибка выхода: " + error.message);
-        });
-    });
+      await signOut(auth);
+      alert("Вы успешно вышли");
+      window.location.href = "index.html";
+    };
   </script>
 </body>
 </html>

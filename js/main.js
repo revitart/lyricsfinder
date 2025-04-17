@@ -1,69 +1,63 @@
-document.addEventListener('DOMContentLoaded', function() {
-  const searchInput = document.getElementById('searchInput');
-  const searchBtn = document.getElementById('searchBtn');
-  const resultsContainer = document.getElementById('results');
+// js/main.js
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+import { getFirestore, collection, query, where, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 
-  function renderSongs(songs) {
-    resultsContainer.innerHTML = '';
-    if (songs.length === 0) {
-      resultsContainer.innerHTML = '<p>Песни не найдены.</p>';
-      return;
-    }
-    songs.forEach(song => {
-      const card = document.createElement('div');
-      card.className = 'song-card';
-      card.onclick = function() {
-        window.location.href = `song-details.html?id=${song.id}`;
-      };
+const firebaseConfig = {
+  apiKey: "AIzaSyBmSng88xnPQgxhUYoRZsPnCi9MB9Z7aP8",
+  authDomain: "lyricsfinder-689ac.firebaseapp.com",
+  projectId: "lyricsfinder-689ac",
+  storageBucket: "lyricsfinder-689ac.firebasestorage.app",
+  messagingSenderId: "643308267858",
+  appId: "1:643308267858:web:22a45404aeebf85767328b",
+  measurementId: "G-F1ELHLM4DB"
+};
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
 
-      const coverImg = document.createElement('img');
-      coverImg.src = song.cover || 'placeholder.jpg';
-      coverImg.alt = song.title;
-      card.appendChild(coverImg);
+async function fetchApprovedSongs() {
+  const q = query(
+    collection(db, "songs"),
+    where("status","==","approved"),
+    orderBy("createdAt","desc")
+  );
+  const snap = await getDocs(q);
+  return snap.docs.map(d=>({ id: d.id, ...d.data() }));
+}
 
-      const infoDiv = document.createElement('div');
-      infoDiv.className = 'song-info';
-      const titleElem = document.createElement('h3');
-      titleElem.textContent = song.title;
-      const artistElem = document.createElement('p');
-      artistElem.textContent = song.artist;
-      infoDiv.appendChild(titleElem);
-      infoDiv.appendChild(artistElem);
-      card.appendChild(infoDiv);
-
-      resultsContainer.appendChild(card);
-    });
+function renderSongs(songs) {
+  const container = document.getElementById('results');
+  container.innerHTML = '';
+  if (!songs.length) {
+    container.innerHTML = '<p>Песни не найдены.</p>';
+    return;
   }
-
-  function searchSongs() {
-    const query = searchInput.value.trim().toLowerCase();
-    const songs = JSON.parse(localStorage.getItem('songs')) || [];
-    // Отбираем только одобренные треки
-    const approvedSongs = songs.filter(song => song.status === 'approved');
-
-    let filteredSongs;
-    if (query === "") {
-      // Если строка поиска пустая, показываем все одобренные треки
-      filteredSongs = approvedSongs;
-    } else {
-      const normalizedQuery = query.replace(/[-]/g, ' ').replace(/\s+/g, ' ');
-      filteredSongs = approvedSongs.filter(song => {
-        const combinedText = (song.artist + " " + song.title).toLowerCase();
-        const normalizedText = combinedText.replace(/[-]/g, ' ').replace(/\s+/g, ' ');
-        return normalizedText.includes(normalizedQuery);
-      });
-    }
-    renderSongs(filteredSongs);
-  }
-
-  searchBtn.addEventListener('click', searchSongs);
-  searchInput.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      searchSongs();
-    }
+  songs.forEach(s => {
+    const card = document.createElement('div');
+    card.className = 'song-card';
+    card.onclick = () => window.location.href = `song-details.html?id=${s.id}`;
+    card.innerHTML = `
+      <img src="${s.cover||'placeholder.jpg'}" alt>
+      <div class="song-info">
+        <h3>${s.title}</h3>
+        <p>${s.artist}</p>
+      </div>`;
+    container.append(card);
   });
+}
 
-  // При загрузке страницы сразу выводим все одобренные треки
-  searchSongs();
-});
+async function searchSongs() {
+  const queryText = document.getElementById('searchInput').value.trim().toLowerCase();
+  const all = await fetchApprovedSongs();
+  const filtered = !queryText
+    ? all
+    : all.filter(s => (s.artist+' '+s.title).toLowerCase().includes(queryText));
+  renderSongs(filtered);
+}
+
+document.getElementById('searchBtn').onclick = searchSongs;
+document.getElementById('searchInput').onkeydown = e => {
+  if (e.key==='Enter') { e.preventDefault(); searchSongs(); }
+};
+
+// сразу покажем все
+searchSongs();
