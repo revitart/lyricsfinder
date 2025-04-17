@@ -17,7 +17,8 @@ const firebaseConfig = {
   apiKey: "AIzaSyBmSng88xnPQgxhUYoRZsPnCi9MB9Z7aP8",
   authDomain: "lyricsfinder-689ac.firebaseapp.com",
   projectId: "lyricsfinder-689ac",
-  storageBucket: "lyricsfinder-689ac.firebasestorage.app",
+  // Исправлено:
+  storageBucket: "lyricsfinder-689ac.appspot.com",
   messagingSenderId: "643308267858",
   appId: "1:643308267858:web:22a45404aeebf85767328b",
   measurementId: "G-F1ELHLM4DB"
