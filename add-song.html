@@ -2,7 +2,6 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <!-- Обеспечивает корректное отображение на мобильных устройствах -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Добавить песню - LyricsFinder</title>
   <link rel="stylesheet" href="css/style.css?v=1.0">
@@ -11,13 +10,11 @@
 <body>
   <header>
     <h1>Добавить песню</h1>
-    <!-- Кнопка для возврата на главную, расположенная в верхней части страницы -->
     <nav class="main-nav">
       <a href="index.html" class="admin-btn">На главную</a>
     </nav>
   </header>
   <main>
-    <!-- Форма для добавления песни -->
     <form id="addSongForm">
       <label for="artist">Исполнитель:</label>
       <input type="text" id="artist" name="artist" required>
@@ -35,7 +32,6 @@
         <option value="Рок">Рок</option>
         <option value="Другой">Другой</option>
       </select>
-      <!-- Контейнер для ввода кастомного жанра, если выбран вариант "Другой" -->
       <div id="customGenreContainer" style="display:none;">
         <label for="customGenre">Укажите жанр:</label>
         <input type="text" id="customGenre" name="customGenre">
@@ -44,11 +40,8 @@
       <label for="lyrics">Текст песни:</label>
       <textarea id="lyrics" name="lyrics" required></textarea>
 
-      <label for="cover">Обложка трека:</label>
-      <!-- Ограничиваем выбор файла только изображениями -->
-      <input type="file" id="cover" name="cover" accept="image/*">
-      <!-- Предварительный просмотр выбранного изображения -->
-      <img id="coverPreview" src="" alt="Предварительный просмотр" style="max-width:200px; display:none; margin-top:10px;">
+      <label for="coverUrl">URL обложки трека (опционально):</label>
+      <input type="url" id="coverUrl" name="coverUrl" placeholder="https://example.com/image.jpg">
 
       <label for="producer">Продюсер (опционально):</label>
       <input type="text" id="producer" name="producer">
@@ -62,8 +55,6 @@
       <button type="submit">Отправить</button>
     </form>
   </main>
-  <!-- Подключаем конфигурацию -->
-  <script src="config.js"></script>
   <script src="js/add-song.js"></script>
 </body>
 </html>

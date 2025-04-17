@@ -34,9 +34,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const pendingHeading = document.createElement('h2');
     pendingHeading.textContent = 'Заявки на добавление треков';
     adminPanel.appendChild(pendingHeading);
+
     const pendingContainer = document.createElement('div');
     pendingContainer.className = 'admin-section pending-section';
     adminPanel.appendChild(pendingContainer);
+
     if (pendingSongs.length === 0) {
       pendingContainer.innerHTML = '<p class="admin-no-songs">Нет заявок на добавление треков.</p>';
     } else {
@@ -70,9 +72,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const approvedHeading = document.createElement('h2');
     approvedHeading.textContent = 'Добавленные треки';
     adminPanel.appendChild(approvedHeading);
+
     const approvedContainer = document.createElement('div');
     approvedContainer.className = 'admin-section approved-section';
     adminPanel.appendChild(approvedContainer);
+
     if (approvedSongs.length === 0) {
       approvedContainer.innerHTML = '<p class="admin-no-songs">Нет добавленных треков.</p>';
     } else {
@@ -102,6 +106,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const card = document.createElement('div');
     card.className = 'admin-card';
 
+    // Шапка карточки: обложка и базовая информация
     const headerDiv = document.createElement('div');
     headerDiv.className = 'admin-card-header';
 
@@ -125,6 +130,7 @@ document.addEventListener('DOMContentLoaded', function() {
     headerDiv.appendChild(basicInfoDiv);
     card.appendChild(headerDiv);
 
+    // Детальная информация
     const detailsDiv = document.createElement('div');
     detailsDiv.className = 'admin-card-details';
 
@@ -169,6 +175,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   function updateSongStatus(id, newStatus) {
     let songs = fetchSongs();
+
     if (newStatus === 'delete') {
       songs = songs.filter(song => song.id != id);
     } else {
@@ -179,6 +186,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return song;
       });
     }
+
     saveSongs(songs);
     renderAdminPanel(adminSearchInput.value.trim().toLowerCase());
   }
@@ -243,6 +251,7 @@ document.addEventListener('DOMContentLoaded', function() {
       <label>Автор текста: <input type="text" name="lyricist" value="${song.lyricist || ''}"></label>
       <label>Дата выхода: <input type="date" name="releaseDate" value="${song.releaseDate || ''}"></label>
     `;
+
     const buttonsDiv = document.createElement('div');
     buttonsDiv.className = 'modal-buttons';
 
@@ -293,5 +302,6 @@ document.addEventListener('DOMContentLoaded', function() {
     renderAdminPanel(adminSearchInput.value.trim().toLowerCase());
   });
 
+  // Отрисовать сразу при загрузке
   renderAdminPanel('');
 });

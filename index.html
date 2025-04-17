@@ -7,28 +7,16 @@
   <link rel="stylesheet" href="css/style.css?v=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    /* Стили для аватарки в навигации */
     .avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background-color: #ccc;
-      overflow: hidden;
-      display: inline-block;
-      vertical-align: middle;
+      width: 40px; height: 40px; border-radius: 50%;
+      background-color: #ccc; overflow: hidden;
+      display: inline-block; vertical-align: middle;
       cursor: pointer;
     }
-    .avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    /* Стили для отображения имени пользователя рядом с аватаркой */
+    .avatar img { width:100%; height:100%; object-fit:cover; }
     #userDisplayName {
-      display: inline-block;
-      margin-left: 10px;
-      font-weight: bold;
-      vertical-align: middle;
+      display:inline-block; margin-left:10px;
+      font-weight:bold; vertical-align:middle;
     }
   </style>
 </head>
@@ -39,9 +27,7 @@
       <a href="add-song.html">Добавить песню</a>
       <a href="register.html" id="registerLink">Регистрация</a>
       <a href="login.html" id="loginLink">Вход</a>
-      <!-- Контейнер для аватара (при авторизации) -->
       <div id="avatarContainer" style="display:none; cursor:pointer;"></div>
-      <!-- Блок для отображения имени пользователя -->
       <span id="userDisplayName" style="display:none;"></span>
     </nav>
   </header>
@@ -52,8 +38,7 @@
     </section>
     <section id="results" class="results-container"></section>
   </main>
-  
-  <!-- Firebase SDK и инициализация авторизации -->
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
@@ -67,54 +52,44 @@
       appId: "1:643308267858:web:22a45404aeebf85767328b",
       measurementId: "G-F1ELHLM4DB"
     };
-
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    onAuthStateChanged(auth, (user) => {
-      if(user) {
-        // Если пользователь авторизован — скрываем ссылки регистрации/входа
-        document.getElementById("registerLink").style.display = "none";
-        document.getElementById("loginLink").style.display = "none";
-        document.getElementById("avatarContainer").style.display = "inline-block";
-        if(user.photoURL) {
-          document.getElementById("avatarContainer").innerHTML = `<div class="avatar"><img src="${user.photoURL}" alt="Avatar"></div>`;
-        } else {
-          document.getElementById("avatarContainer").innerHTML = `<div class="avatar"></div>`;
-        }
-        if(user.displayName) {
-          document.getElementById("userDisplayName").style.display = "inline-block";
-          document.getElementById("userDisplayName").innerText = user.displayName;
-        } else {
-          document.getElementById("userDisplayName").style.display = "none";
-        }
+    onAuthStateChanged(auth, user => {
+      const reg = document.getElementById("registerLink");
+      const log = document.getElementById("loginLink");
+      const av  = document.getElementById("avatarContainer");
+      const nm  = document.getElementById("userDisplayName");
+      if (user) {
+        reg.style.display = log.style.display = "none";
+        av.style.display = "inline-block";
+        av.innerHTML = user.photoURL
+          ? `<div class="avatar"><img src="${user.photoURL}" alt></div>`
+          : `<div class="avatar"></div>`;
+        if (user.displayName) {
+          nm.style.display = "inline-block";
+          nm.textContent = user.displayName;
+        } else nm.style.display = "none";
       } else {
-        // Если не авторизован, показываем ссылки регистрации и входа
-        document.getElementById("registerLink").style.display = "inline-block";
-        document.getElementById("loginLink").style.display = "inline-block";
-        document.getElementById("avatarContainer").style.display = "none";
-        document.getElementById("userDisplayName").style.display = "none";
+        reg.style.display = log.style.display = "inline-block";
+        av.style.display = nm.style.display = "none";
       }
     });
 
-    // Обработчик клика по аватарке — переходит на страницу профиля
     document.getElementById("avatarContainer").addEventListener("click", () => {
       window.location.href = "profile.html";
     });
   </script>
-  
-  <!-- Подключаем основной скрипт для сайта -->
+
   <script src="js/main.js"></script>
-  
-  <!-- Обработчик секретного сочетания клавиш для открытия админ-панели -->
-  <script type="module">
-    // Этот скрипт выполняется после всех других, чтобы не было конфликта с js/main.js
-    document.addEventListener('keydown', function(e) {
-      console.log("Key pressed:", e.key, "ctrl:", e.ctrlKey, "shift:", e.shiftKey);
-      if(e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a') {
+
+  <!-- секретное сочетание клавиш для админ‑панели -->
+  <script>
+    document.addEventListener("keydown", e => {
+      if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "a") {
         e.preventDefault();
-        console.log("Admin key combination triggered");
-        window.location.href = "./admin-panel.html";
+        localStorage.setItem("adminAuth", "true");
+        window.location.href = "admin-panel.html";
       }
     });
   </script>

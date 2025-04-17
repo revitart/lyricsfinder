@@ -9,16 +9,28 @@
 <body>
   <header>
     <h1>Панель администратора</h1>
-    <nav class="main-nav">
-      <a href="index.html">Главная</a>
+    <nav class="breadcrumbs">
+      <a href="index.html" class="admin-btn">Главная</a>
+      <span> &gt; </span>
+      <a href="admin-panel.html" class="admin-btn disabled">Админ панель</a>
+      <button id="adminLogout" class="admin-btn btn-secondary" style="margin-left:auto;">Выйти из админ‑панели</button>
     </nav>
   </header>
   <main>
-    <div id="adminPanel">
-      <p>Добро пожаловать в админ-панель.</p>
-      <!-- Здесь может быть дополнителеный функционал для администратора -->
-    </div>
+    <section class="admin-search">
+      <input type="text" id="adminSearchInput" placeholder="Поиск по трекам...">
+    </section>
+    <div id="adminPanel"></div>
   </main>
+
+  <script>
+    // Выход из админ-панели
+    document.getElementById("adminLogout").addEventListener("click", () => {
+      localStorage.removeItem("adminAuth");
+      window.location.href = "index.html";
+    });
+  </script>
+
   <script src="js/admin-panel.js"></script>
 </body>
 </html>
