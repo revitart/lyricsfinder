@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -7,10 +8,65 @@
   <link rel="stylesheet" href="css/style.css?v=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    .song-item { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #eee; }
-    .song-item button { background:#dc3545; color:#fff; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; }
-    .section-list { margin-top:20px; }
-    .section-list h4 { margin-bottom:10px; }
+    .profile-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background-color: #ccc;
+      overflow: hidden;
+      margin-right: 20px;
+    }
+    .profile-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .song-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .song-item button {
+      background: #dc3545;
+      color: #fff;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .section-list {
+      margin-top: 20px;
+    }
+    .section-list h4 {
+      margin-bottom: 10px;
+    }
+    /* Модальное окно */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    .modal {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 400px;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -20,29 +76,32 @@
       <a href="index.html">Главная</a>
     </nav>
   </header>
-  <main style="margin-top:120px;">
+  <main style="margin-top:120px; padding:20px;">
     <div class="profile-container">
-      <div class="profile-header">
+      <div class="profile-header" style="display:flex; align-items:center; margin-bottom:20px;">
         <div class="profile-avatar" id="profileAvatar"></div>
         <div class="profile-info">
           <h2 id="displayName">Пользователь</h2>
           <p id="emailDisplay"></p>
         </div>
       </div>
+
       <div class="songs-list">
         <h3>Ваши песни</h3>
-        <div id="pendingList" class="section-list">
+        <div class="section-list">
           <h4>Ожидают одобрения</h4>
           <div id="pendingSongs"></div>
         </div>
-        <div id="approvedList" class="section-list">
+        <div class="section-list">
           <h4>Одобренные</h4>
           <div id="approvedSongs"></div>
         </div>
       </div>
+
       <div style="text-align:center; margin-top:20px;">
         <button id="logoutBtn" class="btn btn-secondary">Выйти</button>
       </div>
+
       <div id="logoutModal" class="modal-overlay">
         <div class="modal">
           <p>Вы уверены, что хотите выйти?</p>
@@ -56,7 +115,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
-    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+    import { getFirestore, collection, query, where, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBmSng88xnPQgxhUYoRZsPnCi9MB9Z7aP8",
@@ -105,15 +164,15 @@
       document.getElementById("emailDisplay").textContent = user.email;
       document.getElementById("displayName").textContent = user.displayName||user.email;
       const av = document.getElementById("profileAvatar");
-      av.innerHTML = user.photoURL?`<img src="${user.photoURL}">`:"";
+      av.innerHTML = user.photoURL?`<img src="${user.photoURL}" alt="Avatar">`:"";
       loadUserSongs(user.email);
     });
 
     document.getElementById("logoutBtn").onclick = () => {
-      document.getElementById("logoutModal").style.display = "flex";
+      document.getElementById("logoutModal").classList.add('active');
     };
     document.getElementById("cancelLogout").onclick = () => {
-      document.getElementById("logoutModal").style.display = "none";
+      document.getElementById("logoutModal").classList.remove('active');
     };
     document.getElementById("confirmLogout").onclick = async e => {
       e.preventDefault();
@@ -124,3 +183,5 @@
   </script>
 </body>
 </html>
+```
+
