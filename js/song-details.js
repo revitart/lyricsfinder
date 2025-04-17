@@ -6,7 +6,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyBmSng88xnPQgxhUYoRZsPnCi9MB9Z7aP8",
   authDomain: "lyricsfinder-689ac.firebaseapp.com",
   projectId: "lyricsfinder-689ac",
-  storageBucket: "lyricsfinder-689ac.firebasestorage.app",
+  storageBucket: "lyricsfinder-689ac.appspot.com",
   messagingSenderId: "643308267858",
   appId: "1:643308267858:web:22a45404aeebf85767328b",
   measurementId: "G-F1ELHLM4DB"
@@ -16,22 +16,22 @@ const db  = getFirestore(app);
 
 document.addEventListener('DOMContentLoaded', async () => {
   const params = new URLSearchParams(window.location.search);
-  const id = params.get('id');
-  const container = document.getElementById('songDetails');
+  const id     = params.get('id');
+  const ctn    = document.getElementById('songDetails');
 
   if (!id) {
-    container.innerHTML = '<p>Трек не найден.</p>';
+    ctn.innerHTML = '<p>Трек не найден.</p>';
     return;
   }
 
-  const snap = await getDoc(doc(db, "songs", id));
-  if (!snap.exists() || snap.data().status !== "approved") {
-    container.innerHTML = '<p>Трек не найден или не одобрен.</p>';
+  const snap = await getDoc(doc(db,"songs",id));
+  if (!snap.exists() || snap.data().status!=="approved") {
+    ctn.innerHTML = '<p>Трек не найден или не одобрен.</p>';
     return;
   }
 
   const s = snap.data();
-  container.innerHTML = `
+  ctn.innerHTML = `
     <div class="track-details-container">
       <div class="track-header">
         <img src="${s.cover||'placeholder.jpg'}" class="track-cover" alt>

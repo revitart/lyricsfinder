@@ -7,17 +7,9 @@
   <link rel="stylesheet" href="css/style.css?v=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    .avatar {
-      width: 40px; height: 40px; border-radius: 50%;
-      background-color: #ccc; overflow: hidden;
-      display: inline-block; vertical-align: middle;
-      cursor: pointer;
-    }
-    .avatar img { width:100%; height:100%; object-fit:cover; }
-    #userDisplayName {
-      display:inline-block; margin-left:10px;
-      font-weight:bold; vertical-align:middle;
-    }
+    .avatar { width:40px;height:40px;border-radius:50%;background:#ccc;overflow:hidden;display:inline-block;vertical-align:middle;cursor:pointer; }
+    .avatar img { width:100%;height:100%;object-fit:cover; }
+    #userDisplayName { display:inline-block; margin-left:10px; font-weight:bold; vertical-align:middle; }
   </style>
 </head>
 <body>
@@ -27,7 +19,7 @@
       <a href="add-song.html">Добавить песню</a>
       <a href="register.html" id="registerLink">Регистрация</a>
       <a href="login.html"    id="loginLink">Вход</a>
-      <div id="avatarContainer" style="display:none; cursor:pointer;"></div>
+      <div id="avatarContainer" style="display:none;"></div>
       <span id="userDisplayName" style="display:none;"></span>
     </nav>
   </header>
@@ -40,14 +32,14 @@
   </main>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+    import { initializeApp }        from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBmSng88xnPQgxhUYoRZsPnCi9MB9Z7aP8",
       authDomain: "lyricsfinder-689ac.firebaseapp.com",
       projectId: "lyricsfinder-689ac",
-      storageBucket: "lyricsfinder-689ac.firebasestorage.app",
+      storageBucket: "lyricsfinder-689ac.appspot.com",
       messagingSenderId: "643308267858",
       appId: "1:643308267858:web:22a45404aeebf85767328b",
       measurementId: "G-F1ELHLM4DB"
@@ -62,14 +54,16 @@
             N = document.getElementById("userDisplayName");
       if (user) {
         R.style.display = L.style.display = "none";
-        A.style.display = "inline-block";
         A.innerHTML = user.photoURL
-          ? `<div class="avatar"><img src="${user.photoURL}"></div>`
+          ? `<div class="avatar"><img src="${user.photoURL}" /></div>`
           : `<div class="avatar"></div>`;
+        A.style.display = "inline-block";
         if (user.displayName) {
-          N.style.display = "inline-block";
           N.textContent = user.displayName;
-        } else N.style.display = "none";
+          N.style.display = "inline-block";
+        } else {
+          N.style.display = "none";
+        }
       } else {
         R.style.display = L.style.display = "inline-block";
         A.style.display = N.style.display = "none";
@@ -81,11 +75,10 @@
     };
   </script>
 
-  <!-- основной поиск/рендер -->
   <script type="module" src="js/main.js"></script>
 
-  <!-- админ‑хоткей -->
   <script>
+    // секретное сочетание клавиш для админ‑панели
     document.addEventListener("keydown", e => {
       if (e.ctrlKey && e.shiftKey && e.key.toLowerCase()==="a") {
         e.preventDefault();

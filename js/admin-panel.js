@@ -9,7 +9,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyBmSng88xnPQgxhUYoRZsPnCi9MB9Z7aP8",
   authDomain: "lyricsfinder-689ac.firebaseapp.com",
   projectId: "lyricsfinder-689ac",
-  storageBucket: "lyricsfinder-689ac.firebasestorage.app",
+  storageBucket: "lyricsfinder-689ac.appspot.com",
   messagingSenderId: "643308267858",
   appId: "1:643308267858:web:22a45404aeebf85767328b",
   measurementId: "G-F1ELHLM4DB"
@@ -18,60 +18,41 @@ const app = initializeApp(firebaseConfig);
 const db  = getFirestore(app);
 
 document.addEventListener('DOMContentLoaded', async function() {
-  if (localStorage.getItem('adminAuth') !== 'true') {
-    window.location.href = 'index.html';
-    return;
+  if (localStorage.getItem('adminAuth')!=='true') {
+    window.location.href='index.html'; return;
   }
-  const adminPanel = document.getElementById('adminPanel');
-  const searchInp  = document.getElementById('adminSearchInput');
+  const panel = document.getElementById('adminPanel'),
+        searchInp = document.getElementById('adminSearchInput');
 
-  async function fetchByStatus(status, filter="") {
-    const q = query(
-      collection(db, "songs"),
-      where("status", "==", status)
-    );
+  async function fetchByStatus(status) {
+    const q = query(collection(db,"songs"), where("status","==",status));
     const snap = await getDocs(q);
-    return snap.docs
-      .map(d => ({ id: d.id, ...d.data() }))
-      .filter(s => (s.title + s.artist).toLowerCase().includes(filter));
+    return snap.docs.map(d=>({id:d.id,...d.data()}));
   }
 
   async function render() {
     const filter = searchInp.value.trim().toLowerCase();
-    adminPanel.innerHTML = "";
+    panel.innerHTML = "";
 
-    const pending  = await fetchByStatus("pending", filter);
-    const approved = await fetchByStatus("approved", filter);
+    const pending  = (await fetchByStatus("pending")).filter(s=>(s.title+s.artist).toLowerCase().includes(filter));
+    const approved = (await fetchByStatus("approved")).filter(s=>(s.title+s.artist).toLowerCase().includes(filter));
 
-    // PENDING
-    adminPanel.innerHTML += `<h2>Заявки на проверку</h2>`;
-    const pendDiv = document.createElement('div');
-    pendDiv.className = 'admin-section pending-section';
-    if (!pending.length) {
-      pendDiv.innerHTML = '<p class="admin-no-songs">Нет заявок.</p>';
-    } else {
-      pending.forEach(s => pendDiv.append(createCard(s, true)));
-    }
-    adminPanel.appendChild(pendDiv);
+    panel.innerHTML += `<h2>Заявки на проверку</h2>`;
+    const pDiv = document.createElement('div'); pDiv.className='admin-section';
+    if (!pending.length) pDiv.innerHTML='<p>Нет заявок.</p>';
+    else pending.forEach(s=>pDiv.append(createCard(s,true)));
+    panel.append(pDiv);
 
-    // APPROVED
-    adminPanel.innerHTML += `<h2>Одобренные треки</h2>`;
-    const apprDiv = document.createElement('div');
-    apprDiv.className = 'admin-section approved-section';
-    if (!approved.length) {
-      apprDiv.innerHTML = '<p class="admin-no-songs">Нет треков.</p>';
-    } else {
-      approved.forEach(s => apprDiv.append(createCard(s, false)));
-    }
-    adminPanel.appendChild(apprDiv);
+    panel.innerHTML += `<h2>Одобренные треки</h2>`;
+    const aDiv = document.createElement('div'); aDiv.className='admin-section';
+    if (!approved.length) aDiv.innerHTML='<p>Нет треков.</p>';
+    else approved.forEach(s=>aDiv.append(createCard(s,false)));
+    panel.append(aDiv);
   }
 
-  function createCard(song, isPending) {
-    const card = document.createElement('div');
-    card.className = 'admin-card';
-
-    // header
-    const hd = document.createElement('div'); hd.className = 'admin-card-header';
+  function createCard(song,isPending) {
+    const card = document.createElement('div'); card.className='admin-card';
+    const hd = document.createElement('div'); hd.className='admin-card-header';
     hd.innerHTML = `
       <img src="${song.cover||'placeholder.jpg'}" class="admin-cover">
       <div class="admin-basic-info">
@@ -80,7 +61,6 @@ document.addEventListener('DOMContentLoaded', async function() {
       </div>`;
     card.append(hd);
 
-    // details
     const dt = document.createElement('div'); dt.className='admin-card-details';
     dt.innerHTML = `
       ${song.feat?`<p><strong>Feat:</strong> ${song.feat}</p>`:""}
@@ -91,26 +71,16 @@ document.addEventListener('DOMContentLoaded', async function() {
       ${song.releaseDate?`<p><strong>Дата:</strong> ${song.releaseDate}</p>`:""}`;
     card.append(dt);
 
-    // buttons
     const btns = document.createElement('div'); btns.className='admin-buttons';
     if (isPending) {
-      const ok  = document.createElement('button'); ok.textContent='Одобрить'; ok.className='btn-primary';
-      ok.onclick = async ()=> {
-        await updateDoc(doc(db,"songs",song.id), { status:"approved", approvedAt:serverTimestamp() });
-        render();
-      };
-      const nok = document.createElement('button'); nok.textContent='Отклонить'; nok.className='btn-secondary';
-      nok.onclick = async ()=> {
-        await updateDoc(doc(db,"songs",song.id), { status:"declined" });
-        render();
-      };
-      btns.append(ok,nok);
+      const ok = document.createElement('button'); ok.textContent='Одобрить'; ok.className='btn-primary';
+      ok.onclick = async ()=>{ await updateDoc(doc(db,"songs",song.id),{status:"approved",approvedAt:serverTimestamp()}); render(); };
+      const no = document.createElement('button'); no.textContent='Отклонить'; no.className='btn-secondary';
+      no.onclick = async ()=>{ await updateDoc(doc(db,"songs",song.id),{status:"declined"}); render(); };
+      btns.append(ok,no);
     } else {
       const del = document.createElement('button'); del.textContent='Удалить'; del.className='btn-secondary';
-      del.onclick = async ()=> {
-        await deleteDoc(doc(db,"songs",song.id));
-        render();
-      };
+      del.onclick = async ()=>{ await deleteDoc(doc(db,"songs",song.id)); render(); };
       btns.append(del);
     }
     card.append(btns);
