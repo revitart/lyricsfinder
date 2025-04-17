@@ -38,19 +38,19 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     if (!currentUserEmail) return;
 
-    const artist     = document.getElementById('artist').value.trim();
-    const title      = document.getElementById('title').value.trim();
-    const feat       = document.getElementById('feat').value.trim();
-    let genre        = genreSelect.value;
+    const artist      = document.getElementById('artist').value.trim();
+    const title       = document.getElementById('title').value.trim();
+    const feat        = document.getElementById('feat').value.trim();
+    let genre         = genreSelect.value;
     if (genre === 'Другой') {
       const c = document.getElementById('customGenre').value.trim();
       if (c) genre = c;
     }
-    const lyrics     = document.getElementById('lyrics').value.trim();
-    const cover      = document.getElementById('coverUrl').value.trim();
-    const producer   = document.getElementById('producer').value.trim();
-    const lyricist   = document.getElementById('lyricist').value.trim();
-    const releaseDate= document.getElementById('releaseDate').value;
+    const lyrics      = document.getElementById('lyrics').value.trim();
+    const cover       = document.getElementById('coverUrl').value.trim();
+    const producer    = document.getElementById('producer').value.trim();
+    const lyricist    = document.getElementById('lyricist').value.trim();
+    const releaseDate = document.getElementById('releaseDate').value;
 
     try {
       await addDoc(collection(db, "songs"), {
