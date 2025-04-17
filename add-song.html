@@ -14,11 +14,44 @@
       <a href="index.html" class="admin-btn">На главную</a>
     </nav>
   </header>
-  <main style="margin-top:120px;">
+  <main style="margin-top:120px; padding:20px;">
     <form id="addSongForm">
-      <!-- остальные поля без изменений -->
+      <label for="artist">Исполнитель:</label>
+      <input type="text" id="artist" name="artist" required>
+
+      <label for="title">Название песни:</label>
+      <input type="text" id="title" name="title" required>
+
+      <label for="feat">Приглашенный гость (опционально):</label>
+      <input type="text" id="feat" name="feat">
+
+      <label for="genre">Жанр:</label>
+      <select id="genre" name="genre">
+        <option value="Поп">Поп</option>
+        <option value="Хип-хоп">Хип-хоп</option>
+        <option value="Рок">Рок</option>
+        <option value="Другой">Другой</option>
+      </select>
+      <div id="customGenreContainer" style="display:none;">
+        <label for="customGenre">Укажите жанр:</label>
+        <input type="text" id="customGenre" name="customGenre">
+      </div>
+
+      <label for="lyrics">Текст песни:</label>
+      <textarea id="lyrics" name="lyrics" required></textarea>
+
       <label for="coverUrl">URL обложки трека (опционально):</label>
       <input type="url" id="coverUrl" name="coverUrl" placeholder="https://example.com/image.jpg">
+
+      <label for="producer">Продюсер (опционально):</label>
+      <input type="text" id="producer" name="producer">
+
+      <label for="lyricist">Автор текста (опционально):</label>
+      <input type="text" id="lyricist" name="lyricist">
+
+      <label for="releaseDate">Дата выхода (опционально):</label>
+      <input type="date" id="releaseDate" name="releaseDate">
+
       <button type="submit">Отправить</button>
     </form>
   </main>
